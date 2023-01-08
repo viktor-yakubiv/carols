@@ -19,6 +19,11 @@
 <style>
 :root {
 	scroll-padding-block: calc(var(--section-space) / 2);
+	scroll-snap-type: block proximity;
+}
+
+article {
+	scroll-snap-align: start;
 }
 
 /* FIXUP: <br> gets affected by owl-spacing in Firefox */
