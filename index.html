@@ -17,15 +17,34 @@
 <link rel=stylesheet href=https://unpkg.com/@yakubiv/css@0.1>
 
 <style>
+/* Scrolling */
+
 :root {
 	scroll-padding-block: calc(var(--section-space) / 2);
 	scroll-snap-type: block proximity;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	:root {
+		scroll-behavior: smooth;
+	}
 }
 
 article {
 	scroll-snap-align: start;
 }
 
+
+/* Layout */
+
+body {
+	margin-inline: auto;
+	max-inline-size: 60ch;
+	max-inline-size: max-content;
+}
+</style>
+
+<style>
 /* FIXUP: <br> gets affected by owl-spacing in Firefox */
 br { margin-block-start: 0 !important }
 </style>
