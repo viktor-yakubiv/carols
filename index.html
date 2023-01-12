@@ -9,6 +9,7 @@
   content="
     default-src 'self';
     style-src 'self' 'unsafe-inline' https://unpkg.com/@yakubiv/;
+    script-src 'self' 'unsafe-inline';
   "
 >
 
@@ -37,10 +38,31 @@ article {
 
 /* Layout */
 
-body {
+:root {
+	--row-gap: var(--space-700);
+	--column-gap: var(--space-700);
+}
+
+main {
 	margin-inline: auto;
+	inline-size: max-content;
 	max-inline-size: 60ch;
-	max-inline-size: max-content;
+}
+
+nav > ol {
+	position: sticky;
+	inset-block-start: var(--section-space);
+}
+
+:link:where(.active) {
+	--link-underline-size: 2em;
+	color: var(--link-active-color);
+}
+
+@supports (width: 1lh) {
+	:link:where(.active) {
+		--link-underline-size: 1lh;
+	}
 }
 </style>
 
@@ -49,11 +71,9 @@ body {
 br { margin-block-start: 0 !important }
 </style>
 
-<header>
-	<h1>Колядки</h1>
-</header>
+<h1 class="hidden visually">Колядки</h1>
 
-<nav id=зміст>
+<nav id=зміст class=sidebar>
 	<h2>Зміст</h2>
 
 	<ol>
@@ -670,3 +690,19 @@ br { margin-block-start: 0 !important }
 			Хто в Бога вірить буде на світі спасенний
 	</article>
 </main>
+
+<script type=module>
+	const observer = new IntersectionObserver(entries => {
+		entries.forEach(({ target, isIntersecting }) => {
+			const $navItem = document.querySelector(`nav [href="#${target.id}"]`)
+			if ($navItem == null) return;
+	
+			$navItem.classList.toggle('active', isIntersecting)
+		})
+	}, {
+		rootMargin: '-50%',
+		thresholds: [0, 1],
+	})
+
+	document.querySelectorAll('article[id]').forEach($ => observer.observe($))
+</script>
