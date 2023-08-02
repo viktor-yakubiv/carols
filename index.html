@@ -17,7 +17,25 @@
 
 <link rel=stylesheet href=https://unpkg.com/@yakubiv/css@0.2>
 
-<style>
+<style id=yakubiv-css-extension>
+:link:where(.active) {
+	--link-underline-size: 2em;
+	color: var(--link-active-color);
+}
+
+@supports (width: 1lh) {
+	:link:where(.active) {
+		--link-underline-size: 1lh;
+	}
+}
+</style>
+
+<style id=css-bug-fixex>
+/* FIXUP: <br> gets affected by owl-spacing in Firefox */
+br { margin-block-start: 0 !important }
+</style>
+
+<style id=css-layout>
 /* Scrolling */
 
 :root {
@@ -32,15 +50,20 @@
 }
 
 article {
-	scroll-snap-align: start;
 }
 
 
 /* Layout */
 
 :root {
+	--body-padding-block: var(--space-600);
+	--body-padding-inline: var(--space-700);
 	--row-gap: var(--space-700);
 	--column-gap: var(--space-700);
+}
+
+body {
+	padding: 0;
 }
 
 main {
@@ -49,47 +72,55 @@ main {
 	max-inline-size: 60ch;
 }
 
-nav > ol {
+main > * {
+	margin-block-start: 0;
+}
+
+nav,
+article {
+	box-sizing: border-box;
+	padding-block: var(--body-padding-block);
+	padding-inline: var(--body-padding-inline);
+	scroll-snap-align: start;
+}
+
+nav {
+	--sidebar-inline-size: 20rem;
 	position: sticky;
-	inset-block-start: var(--section-space);
+	inset-block-start: 0;
+	background-color: var(--background-color);
 }
 
-:link:where(.active) {
-	--link-underline-size: 2em;
-	color: var(--link-active-color);
+nav summary {
+	list-style-type: none;
 }
 
-@supports (width: 1lh) {
-	:link:where(.active) {
-		--link-underline-size: 1lh;
-	}
+nav summary::-webkit-details-marker {
+	display: none;
 }
-</style>
-
-<style>
-/* FIXUP: <br> gets affected by owl-spacing in Firefox */
-br { margin-block-start: 0 !important }
 </style>
 
 <h1 class="hidden visually">Колядки</h1>
 
 <nav id=зміст class=sidebar>
-	<h2>Зміст</h2>
+	<details open>
+		<summary><h2>Зміст</h2></summary>
 
-	<ol>
-		<li><a href=#бог-з-неба-сходить>Бог з неба сходить</a>
-		<li><a href=#бандера-ходить>Бандера ходить</a>
-		<li><a href=#на-різдвяні-свята>На різдвяні свята</a>
-		<li><a href=#небо-і-земля>Небо і земля</a>
-		<li><a href=#в-вифлеємі-новина>В Вифлеємі новина</a>
-		<li><a href=#вчора-із-вечора>Вчора із вечора</a>
-		<li><a href=#бог-предвічний>Бог предвічний</a>
-		<li><a href=#ой-там-за-горою>Ой, там за горою</a>
-		<li><a href=#по-цілім-світі-сталася-новина>По цілім світі сталася новина
-		<li><a href=#витай-ісусе>Витай Ісусе
-		<li><a href=#во-вифлеємі-нині-новина>Во Вифлеємі нині новина</a>
-		<li><a href=#зійшов-із-неба-ісус>Зійшов із неба Ісус</a>
-	</ol>
+		<ol>
+			<li><a href=#бог-з-неба-сходить>Бог з неба сходить</a>
+			<li><a href=#бандера-ходить>Бандера ходить</a>
+			<li><a href=#на-різдвяні-свята>На різдвяні свята</a>
+			<li><a href=#небо-і-земля>Небо і земля</a>
+			<li><a href=#в-вифлеємі-новина>В Вифлеємі новина</a>
+			<li><a href=#вчора-із-вечора>Вчора із вечора</a>
+			<li><a href=#бог-предвічний>Бог предвічний</a>
+			<li><a href=#ой-там-за-горою>Ой, там за горою</a>
+			<li><a href=#по-цілім-світі-сталася-новина>По цілім світі сталася новина
+			<li><a href=#витай-ісусе>Витай Ісусе
+			<li><a href=#во-вифлеємі-нині-новина>Во Вифлеємі нині новина</a>
+			<li><a href=#зійшов-із-неба-ісус>Зійшов із неба Ісус</a>
+		</ol>
+	</details>
 </nav>
 
 <main>
