@@ -29,20 +29,17 @@ jobs:
         uses: oven-sh/setup-bun@v1
       - name: Install dependencies
         run: bun install --frozen-lockfile
-      - name: Build index.html
-        run: bun run build
-      - name: Clean up
-        run: |
-          rm -rf node_modules/
+      - name: Build artifact
+        run: make
       - name: Fix permissions
         run: |
-          chmod -c -R +rX "./" | while read line; do
+          chmod -c -R +rX './public' | while read line; do
             echo "::warning title=Invalid file permissions automatically fixed::$line"
           done
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: '.'
+          path: 'public'
 
   deploy:
     name: Deploy

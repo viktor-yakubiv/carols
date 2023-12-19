@@ -1,0 +1,2 @@
+/* FIXUP: <br> gets affected by owl-spacing in Firefox */
+br { margin-block-start: 0 !important }

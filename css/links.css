@@ -1,0 +1,10 @@
+:link:where(.active) {
+	--link-underline-size: 2em;
+	color: var(--link-active-color);
+}
+
+@supports (width: 1lh) {
+	:link:where(.active) {
+		--link-underline-size: 1lh;
+	}
+}
