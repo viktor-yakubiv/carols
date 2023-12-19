@@ -6,6 +6,7 @@ import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import rehypeParse from 'rehype-parse'
 import rehypeStringify from 'rehype-stringify'
+import rehypeRaw from 'rehype-raw'
 import rehypeFormat from 'rehype-format'
 import rehypeInferTitleMeta from 'rehype-infer-title-meta'
 import { select } from 'hast-util-select'
@@ -19,7 +20,8 @@ const extractCarolData = () => (tree, file) => {
 
 const carolProcessor = unified()
 	.use(remarkParse)
-	.use(remarkRehype)
+  .use(remarkRehype, { allowDangerousHtml: true })
+  .use(rehypeRaw)
 	.use(rehypeStringify)
 	.use(rehypeInferTitleMeta)
 	.use(extractCarolData)
@@ -29,7 +31,7 @@ const carolInjector = () => (tree, file) => {
 	const { carols } = file.data ?? []
 	const main = select('main', tree)
 	const listOfContents = select('nav ol', tree)
-	
+
 	for (const carolFile of carols) {
 		const { id, title, body } = carolFile.data ?? {}
 		const article = h('article', { id }, body)
