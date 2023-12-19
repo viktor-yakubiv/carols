@@ -18,14 +18,20 @@
 
 <h1 class="hidden visually">Колядки</h1>
 
-<nav id=зміст class=sidebar>
-	<details open>
-		<summary><h2>Зміст</h2></summary>
-		<ol></ol>
-	</details>
-</nav>
+<details id=navigation class=sidebar open>
+	<summary>
+		<span class="hidden visually">Зміст</span>
+	</summary>
 
-<main></main>
+	<nav id=зміст aria-labelledby=h-зміст>
+		<h2 id=h-зміст>Зміст</h2>
+		<ol></ol>
+	</nav>
+</details>
+
+<div id=content>
+	<main></main>
+</div>
 
 <script type=module>
 	const observer = new IntersectionObserver(entries => {

@@ -1,7 +1,7 @@
 /* Scrolling */
 
 :root {
-	scroll-padding-block: calc(var(--section-space) / 2);
+	scroll-padding-block: var(--body-padding-block);
 	scroll-snap-type: block proximity;
 }
 
@@ -28,6 +28,13 @@ body {
 	padding: 0;
 }
 
+body > nav {
+	position: sticky;
+	top: 0;
+	height: 100vh;
+	height: 100dvh;
+}
+
 main {
 	margin-inline: auto;
 	inline-size: max-content;
@@ -38,6 +45,8 @@ main > * {
 	margin-block-start: 0;
 }
 
+/* Temporary */
+
 nav,
 article {
 	box-sizing: border-box;
@@ -46,17 +55,58 @@ article {
 	scroll-snap-align: start;
 }
 
-nav {
-	--sidebar-inline-size: 20rem;
+#navigation {
+	--sidebar-inline-size: 25rem;
 	position: sticky;
+	top: 0;
+	height: 100vh;
+	height: 100dvh;
+	z-index: 1000;
 	inset-block-start: 0;
+	background-color: var(--background-color);
+	inline-size: max-content;
+	max-inline-size: var(--sidebar-inline-size);
 	background-color: var(--background-color);
 }
 
-nav summary {
-	list-style-type: none;
+#navigation:not([open]) {
+	--sidebar-inline-size: 0;
 }
 
-nav summary::-webkit-details-marker {
-	display: none;
+#navigation > summary {
+	list-style-type: none;
+	position: absolute;
+	background-color: var(--text-color);
+}
+
+#navigation > summary + * {
+	margin-block-start: unset;
+}
+
+/**
+ * Separators
+ *
+ * 1. Temporary removal of headings
+ */
+
+:where(article) {
+	position: relative;
+}
+
+article + article::before {
+	content: '❋\2003❋\2003❋';
+	position: relative;
+	display: block;
+	inset-block-start: calc(-1 * var(--body-padding-block) - .5em);
+	line-height: 1;
+	text-align: center;
+	opacity: .4;
+}
+
+main h1 {
+	display: none; /* 1 */
+}
+
+main h1 + * {
+	margin-block-start: unset; /* 1 */
 }
