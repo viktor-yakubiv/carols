@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@yakubiv/carols",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "author": "Viktor Yakubiv (www.yakubiv.com)",
   "license": "MIT",
   "devDependencies": {
