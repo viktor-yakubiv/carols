@@ -10,9 +10,12 @@ import rehypeRaw from 'rehype-raw'
 import rehypeFormat from 'rehype-format'
 import rehypeInferTitleMeta from 'rehype-infer-title-meta'
 import { select } from 'hast-util-select'
+import { shiftHeading } from 'hast-util-shift-heading'
 import { h } from 'hastscript'
 
 const extractCarolData = () => (tree, file) => {
+	shiftHeading(tree, +1)
+
 	file.data.title = file.data.meta.title
 	file.data.body = tree
 	file.data.id = parsePath(file.path).name
