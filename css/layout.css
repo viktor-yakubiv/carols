@@ -6,9 +6,6 @@
 	}
 }
 
-article {
-}
-
 
 /* Layout */
 
@@ -19,14 +16,10 @@ article {
 	--column-gap: var(--space-700);
 }
 
-body {
-	padding: 0;
-}
-
 main {
 	margin-inline: auto;
 	inline-size: max-content;
-	max-inline-size: calc(60ch + 2 * var(--body-padding-inline));
+	max-inline-size: 60ch;
 }
 
 article {
