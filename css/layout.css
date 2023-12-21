@@ -18,12 +18,16 @@
 
 main {
 	margin-inline: auto;
-	inline-size: max-content;
-	max-inline-size: 60ch;
+	max-inline-size: max-content;
 }
 
 article {
 	scroll-margin-block-start: calc(var(--section-space) / 2);
+}
+
+#content {
+	margin-inline: auto;
+	max-inline-size: 60ch;
 }
 
 #navigation {
