@@ -45,7 +45,7 @@ const carolInjector = () => (tree, file) => {
 	}
 }
 
-const carols = await glob('songs/*.md')
+const carols = await glob('колядки/*.md')
 	.then(paths => Promise.all(paths.map(p => read(p))))
 	.then(files => Promise.all(files.map(f => {
 		return carolProcessor.process(f)
