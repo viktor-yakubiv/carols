@@ -14,7 +14,7 @@ import { shiftHeading } from 'hast-util-shift-heading'
 import { h } from 'hastscript'
 
 const extractCarolData = () => (tree, file) => {
-	shiftHeading(tree, +1)
+	shiftHeading(tree, +2)
 
 	file.data.title = file.data.meta.title
 	file.data.body = tree
@@ -30,22 +30,26 @@ const carolProcessor = unified()
 	.use(extractCarolData)
 	.freeze()
 
-const carolInjector = () => (tree, file) => {
-	const { carols } = file.data ?? []
-	const main = select('main', tree)
-	const listOfContents = select('nav ol', tree)
+const inject = (files, tree, sectionName) => {
+	const $section = select(`#${sectionName}`, tree)
+	const $nav = select(`#зміст-${sectionName} ol`, tree)
 
-	for (const carolFile of carols) {
-		const { id, title, body } = carolFile.data ?? {}
+	for (const file of files) {
+		const { id, title, body } = file.data ?? {}
 		const article = h('article', { id }, body)
 		const item = h('li', h('a', { href: '#' + id }, title))
 
-		main.children.push(article)
-		listOfContents.children.push(item)
+		$section.children.push(article)
+		$nav.children.push(item)
 	}
 }
 
-const carols = await glob('колядки/*.md')
+const contentInjector = () => (tree, file) => {
+	inject(file.data.carols, tree, 'колядки')
+	inject(file.data.congrats, tree, 'віншування')
+}
+
+const readDirectory = (name) => glob(`${name}/*.md`)
 	.then(paths => Promise.all(paths.map(p => read(p))))
 	.then(files => Promise.all(files.map(f => {
 		return carolProcessor.process(f)
@@ -56,15 +60,18 @@ const carols = await glob('колядки/*.md')
 		})
 	}))
 
+const carols = await readDirectory('колядки')
+const congrats = await readDirectory('віншування')
+
 const templateFile = await read('template.html')
 templateFile.data ??= {}
-templateFile.data.carols = carols
+Object.assign(templateFile.data, { carols, congrats })
 
 const indexFile = await unified()
 	.use(rehypeParse)
 	.use(rehypeStringify)
 	.use(rehypeFormat)
-	.use(carolInjector)
+	.use(contentInjector)
 	.process(templateFile)
 
 indexFile.path = 'index.html'

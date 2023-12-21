@@ -26,21 +26,11 @@ body {
 main {
 	margin-inline: auto;
 	inline-size: max-content;
-	max-inline-size: 60ch;
+	max-inline-size: calc(60ch + 2 * var(--body-padding-inline));
 }
 
-main > article + article {
-	margin-block-start: 0;
-}
-
-/* Temporary */
-
-nav,
 article {
-	box-sizing: border-box;
-	padding-block: var(--body-padding-block);
-	padding-inline: var(--body-padding-inline);
-	scroll-snap-align: start;
+	scroll-margin-block-start: calc(var(--section-space) / 2);
 }
 
 #navigation {
