@@ -1,0 +1,13 @@
+/**
+ * Book-like bock quotation for carol texts
+ */
+
+article blockquote {
+	margin-inline: unset;
+}
+
+article blockquote::before {
+	content: '—';
+	float: inline-start;
+	margin-inline-end: 1ch;
+}
