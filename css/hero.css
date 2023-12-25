@@ -1,0 +1,19 @@
+:root {
+	--hero-padding-block: var(--space-800);
+}
+
+h1 {
+	padding-block-start: calc(var(--hero-padding-block) - var(--body-padding-block));
+	padding-block-end: var(--hero-padding-block);
+	margin-block-end: var(--hero-padding-block);
+	border-block-end: var(--stroke-100) dashed rgb(0 0 0 / .25);
+	font-weight: 600;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+h1::before {
+	content: '✨';
+	display: block;
+	margin-block-end: var(--space-400);
+}
