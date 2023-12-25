@@ -9,12 +9,27 @@ import rehypeStringify from 'rehype-stringify'
 import rehypeRaw from 'rehype-raw'
 import rehypeFormat from 'rehype-format'
 import rehypeInferTitleMeta from 'rehype-infer-title-meta'
+import { isElement } from 'hast-util-is-element'
 import { select } from 'hast-util-select'
 import { shiftHeading } from 'hast-util-shift-heading'
 import { h } from 'hastscript'
 
+/**
+ * @param {import('hast').Root} tree
+ */
+const wrapFooter = (tree) => {
+	const rulerIndex = tree.children.findLastIndex(node => isElement(node, 'hr'))
+	if (rulerIndex < 0) {
+		return
+	}
+
+	const footer = tree.children.splice(rulerIndex)
+	tree.children.push(h('footer', footer.slice(1)))
+}
+
 const extractCarolData = () => (tree, file) => {
 	shiftHeading(tree, +2)
+	wrapFooter(tree)
 
 	file.data.title = file.data.meta.title
 	file.data.body = tree

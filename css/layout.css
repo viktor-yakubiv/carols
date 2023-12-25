@@ -25,6 +25,11 @@ article {
 	scroll-margin-block-start: calc(var(--section-space) / 2);
 }
 
+article > footer {
+	font-size: var(--size-300);
+	color: var(--minor-text-color);
+}
+
 #content {
 	margin-inline: auto;
 	max-inline-size: 60ch;
