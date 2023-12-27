@@ -4,12 +4,14 @@ import { read, write } from 'to-vfile'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
+import remarkDirective from 'remark-directive'
 import rehypeParse from 'rehype-parse'
 import rehypeStringify from 'rehype-stringify'
 import rehypeRaw from 'rehype-raw'
 import rehypeFormat from 'rehype-format'
 import rehypeInferTitleMeta from 'rehype-infer-title-meta'
-import { convert } from 'unist-util-is'
+import { is, convert } from 'unist-util-is'
+import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 import { select } from 'hast-util-select'
 import { shiftHeading } from 'hast-util-shift-heading'
 import { newlineToBreak } from 'mdast-util-newline-to-break'
@@ -18,6 +20,41 @@ import { h } from 'hastscript'
 
 const isDivider = convert('thematicBreak')
 const isHeading = convert('heading')
+const isChorus = node =>
+	is(node, 'containerDirective') &&
+	node.name.toLowerCase() === 'chorus'
+
+const withChorus = (tree) => {
+	const chorus = tree.children.find(node => isChorus(node))
+	if (chorus == null) {
+		return
+	}
+
+	chorus.type = 'chorus'
+	chorus.data ??= {}
+	chorus.data.hProperties = { className: ['chorus'] }
+
+	visit(chorus, 'paragraph', (node) => {
+		node.children.unshift(u('html', '<i>'))
+		node.children.push(u('html', '</i>'))
+		return SKIP
+	})
+
+	visit(tree, 'paragraph', (node, i, parent) => {
+		const next = parent.children[i + 1]
+		if (node === chorus || parent === chorus || next === chorus) {
+			return SKIP
+		}
+
+		// Insert chorus after the current paragraph
+		parent.children = [
+			...parent.children.slice(0, i + 1),
+			chorus,
+			...parent.children.slice(i + 1),
+		]
+		return [CONTINUE, i + 2]
+	})
+}
 
 /**
  * @param {import('mdast').Root} tree
@@ -29,22 +66,21 @@ const splitStructure = (tree) => {
 		: lastRulerIndex + 1
 
 	const title = tree.children.find(node => isHeading(node))
-	const body = tree.children
-		.slice(0, footerIndex - 1)
-		.filter(node => node !== title)
+
 	const footer = u('footer', tree.children.slice(footerIndex))
 	footer.data = { hName: 'footer' }
 
-	return {
-		title,
-		body: u('root', body), // a fragment
-		footer: footer,
-	}
+	const body = u('root', tree.children
+		.slice(0, footerIndex - 1)
+		.filter(node => node !== title))
+
+	return { title, body, footer }
 }
 
 const carolSyntax = () => (tree) => {
 	const { title, body, footer } = splitStructure(tree)
 	newlineToBreak(body)
+	withChorus(body)
 	tree.children = [title, body]
 	if (footer.children.length > 0) tree.children.push(footer)
 }
@@ -61,6 +97,7 @@ const carolData = () => (tree, file) => {
 
 const carolProcessor = unified()
 	.use(remarkParse)
+	.use(remarkDirective)
 	.use(carolSyntax)
   .use(remarkRehype, { allowDangerousHtml: true })
   .use(rehypeRaw)
