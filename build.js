@@ -9,28 +9,51 @@ import rehypeStringify from 'rehype-stringify'
 import rehypeRaw from 'rehype-raw'
 import rehypeFormat from 'rehype-format'
 import rehypeInferTitleMeta from 'rehype-infer-title-meta'
-import { isElement } from 'hast-util-is-element'
+import { convert } from 'unist-util-is'
 import { select } from 'hast-util-select'
 import { shiftHeading } from 'hast-util-shift-heading'
+import { newlineToBreak } from 'mdast-util-newline-to-break'
+import { u } from 'unist-builder'
 import { h } from 'hastscript'
 
-/**
- * @param {import('hast').Root} tree
- */
-const wrapFooter = (tree) => {
-	const rulerIndex = tree.children.findLastIndex(node => isElement(node, 'hr'))
-	if (rulerIndex < 0) {
-		return
-	}
+const isDivider = convert('thematicBreak')
+const isHeading = convert('heading')
 
-	const footer = tree.children.splice(rulerIndex)
-	tree.children.push(h('footer', footer.slice(1)))
+/**
+ * @param {import('mdast').Root} tree
+ */
+const splitStructure = (tree) => {
+	const lastRulerIndex = tree.children.findLastIndex(node => isDivider(node))
+	const footerIndex = lastRulerIndex < 0
+		? tree.children.length
+		: lastRulerIndex + 1
+
+	const title = tree.children.find(node => isHeading(node))
+	const body = tree.children
+		.slice(0, footerIndex - 1)
+		.filter(node => node !== title)
+	const footer = u('footer', tree.children.slice(footerIndex))
+	footer.data = { hName: 'footer' }
+
+	return {
+		title,
+		body: u('root', body), // a fragment
+		footer: footer,
+	}
 }
 
-const extractCarolData = () => (tree, file) => {
-	shiftHeading(tree, +2)
-	wrapFooter(tree)
+const carolSyntax = () => (tree) => {
+	const { title, body, footer } = splitStructure(tree)
+	newlineToBreak(body)
+	tree.children = [title, body]
+	if (footer.children.length > 0) tree.children.push(footer)
+}
 
+const carolFormat = () => (tree) => {
+	shiftHeading(tree, +2)
+}
+
+const carolData = () => (tree, file) => {
 	file.data.title = file.data.meta.title
 	file.data.body = tree
 	file.data.id = parsePath(file.path).name
@@ -38,11 +61,13 @@ const extractCarolData = () => (tree, file) => {
 
 const carolProcessor = unified()
 	.use(remarkParse)
+	.use(carolSyntax)
   .use(remarkRehype, { allowDangerousHtml: true })
   .use(rehypeRaw)
 	.use(rehypeStringify)
 	.use(rehypeInferTitleMeta)
-	.use(extractCarolData)
+	.use(carolFormat)
+	.use(carolData)
 	.freeze()
 
 const inject = (files, tree, sectionName) => {
