@@ -1,0 +1,24 @@
+name: Sync PR body to file
+
+on:
+  pull_request:
+    types: [edit]
+    branches: ['data/**']
+
+jobs:
+  sync:
+    name: Build
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Pull PR body into file
+        run: |
+          file="$(gh pr view --json files | jq -r '.files[].path' | grep '\.md$' | head -1)"
+          gh pr view --json body | jq -r .body > "$file"
+      - name: Commit changes
+        uses: actions4git/add-commit-push@v1
+        with:
+          message: 'Update from PR body'
