@@ -1,9 +1,9 @@
 name: Sync PR body to file
 
 on:
-  pull_request:
-    types: [edit]
-    branches: ['data/**']
+  pull_request_target:
+    types: [edited]
+    paths: ['**.md']
 
 jobs:
   sync:
