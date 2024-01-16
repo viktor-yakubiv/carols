@@ -15,6 +15,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Pull PR body into file
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           file="$(gh pr view --json files | jq -r '.files[].path' | grep '\.md$' | head -1)"
           gh pr view --json body | jq -r .body > "$file"
