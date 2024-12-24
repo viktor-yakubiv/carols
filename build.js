@@ -62,7 +62,7 @@ const withChorus = (tree) => {
 const splitStructure = (tree) => {
 	const lastRulerIndex = tree.children.findLastIndex(node => isDivider(node))
 	const footerIndex = lastRulerIndex < 0
-		? tree.children.length
+		? tree.children.length + 1
 		: lastRulerIndex + 1
 
 	const title = tree.children.find(node => isHeading(node))
