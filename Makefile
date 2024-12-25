@@ -1,11 +1,16 @@
 SOURCES := $(wildcard */*.md)
+TARGETS := $(addprefix public/, $(SOURCES:.md=))
 
-public: index.html css
+public: index.html css $(TARGETS)
 	mkdir -p public; \
 	rsync -rLv index.html css public/
 
 node_modules:
 	bun install --frozen-lockfile
+
+public/%: %.md index.html
+	@mkdir -p 'public/$(dir $*)'
+	cp index.html '$@'
 
 index.html: template.html build.js node_modules $(SOURCES)
 	bun run build.js
